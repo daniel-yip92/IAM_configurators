@@ -1,0 +1,10 @@
+project_filelist.txt (this file)
+setup_order.txt
+iambic_initiate.sh
+IambicHubRole.yml
+IambicSpokeRole.yml
+configure_aws.sh
+configure_az.sh
+new_user.sh
+add_access_aws.sh
+configure_az_devops.sh

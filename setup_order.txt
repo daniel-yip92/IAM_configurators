@@ -1,0 +1,18 @@
+requires existing aws and azure accounts
+requires existing azure devops project (no need existing repo)
+
+run iambic_initiate.sh
+
+configure aws cli with aws account credentials (manual)
+(export env variable AWS_PROFILE= if have multiple aws accounts)
+login to azure account with az login (manual)
+
+place IambicHubRole.yml, IambicSpokeRole.yml, configure_aws.sh, configure_az.sh, new_user.sh, add_access_aws.sh into the iambic_templates folder (manual)
+
+run configure_aws.sh
+run configure_az.sh
+run new_user.sh
+run add_access_aws.sh
+run configure_az_devops.sh
+
+git add/commit/push

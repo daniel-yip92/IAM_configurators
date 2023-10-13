@@ -1,0 +1,75 @@
+AWSTemplateFormatVersion: 2010-09-09
+Description: >-
+  This template creates the IAMbic spoke role.
+Parameters:
+  SpokeRoleName:
+    Type: String
+  HubRoleArn:
+    Type: String
+Resources:
+  IambicSpokeRole:
+    Type: 'AWS::IAM::Role'
+    Properties:
+      RoleName: !Ref SpokeRoleName
+      Description: >-
+        This role is used by IAMbic to perform all actions on the account.
+        It is assumed by the Iambic hub role in the hub account.
+        Managed via CloudFormation.
+      AssumeRolePolicyDocument:
+        Version: '2012-10-17'
+        Statement:
+          - Effect: Allow
+            Action:
+              - sts:AssumeRole
+              - sts:TagSession
+              - sts:SetSourceIdentity
+            Principal:
+              AWS: !Ref HubRoleArn
+      Policies:
+        - PolicyName: base_permissions
+          PolicyDocument:
+            Version: '2012-10-17'
+            Statement:
+              - Effect: Allow
+                Action:
+                  - ec2:Describe*
+                  - iam:*
+                  - identitystore:*
+                  - organizations:describe*
+                  - organizations:list*
+                  - sso:*
+                Resource:
+                  - '*'
+              - Effect: Allow
+                Action:
+                  - secretsmanager:CreateSecret
+                  - secretsmanager:GetSecretValue
+                  - secretsmanager:describesecret
+                  - secretsmanager:listsecrets
+                  - secretsmanager:listsecretversionids
+                  - secretsmanager:PutSecretValue
+                Resource:
+                  - 'arn:aws:secretsmanager:*:*:secret:iambic-config-secrets-*'
+              - Sid: 'SqsWriteAccessForResourceMonitoring'
+                Effect: Allow
+                Action:
+                  - sqs:ReceiveMessage
+                  - sqs:SendMessage
+                  - sqs:DeleteMessage
+                  - sqs:GetQueueUrl
+                  - sqs:GetQueueAttributes
+                Resource:
+                  - 'arn:aws:sqs:*:*:IAMbicChangeDetectionQueue*'
+              - Sid: SCPsWrite
+                Effect: Allow
+                Action:
+                - organizations:CreatePolicy
+                - organizations:DeletePolicy
+                - organizations:UpdatePolicy
+                - organizations:AttachPolicy
+                - organizations:DetachPolicy
+                - organizations:TagResource
+                - organizations:UntagResource
+                Resource: '*'
+      ManagedPolicyArns:
+        - 'arn:aws:iam::aws:policy/ReadOnlyAccess'
